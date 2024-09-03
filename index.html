@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="en-us">
+<head>
+    <title>Chess Online</title>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width = device-width,  initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap" rel="stylesheet">
+    <link rel =  "stylesheet" href = "style.css">
+</head>
+
+<body>
+    
+    <div class = "app">
+        <div class = "titleDiv">
+            <a href = "">CHESS ONLINE</a>
+        </div>
+
+        <div id = "gameContainer">
+            <div id="gameboard">    
+            </div>
+
+            <div class = "hide resultNotif" >
+                <h3 id = "resultTxt"></h3>
+                <p id = "rematchHeader">Rematch?</p>
+                <div class = "btnDiv">
+                    <button type = "button" id = "accept" class = "matchButton">Accept &#10004</button>
+                    <button type = "button" id = "reject" class = "matchButton">Reject &#10006</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id = "userInterface">         
+            <div id = "searchUI" class = "hide">  
+                <div id = "optionsContainer" class = "hide">
+                    <select name = "colorSelect" id = "selectColor" style = "border-radius: 20px;"> 
+                        <option value ="" disabled selected>Select your starting color <!--&#9964--></option>
+                        <option value ="white">White</option>
+                        <option value ="black">Black</option>
+                    </select>
+                </div>
+            </div>
+            
+
+            <div id = "setUp">
+                <button id = "singlePlayer" class = "playerButton" type="button">Single Player</button>
+            </div>
+
+        </div>     
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
