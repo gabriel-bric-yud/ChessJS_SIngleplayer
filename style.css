@@ -53,7 +53,7 @@ body {
 .titleDiv {
     display: grid;
     width: fit-content;
-    margin: 0px auto;
+    margin: 10px auto;
     padding: 0px;
     color: white;
     text-align: center;
@@ -62,8 +62,11 @@ body {
 
 .titleDiv a {
     margin: 0 auto;
-    font-family: "Bungee Spice", cursive;
+    font-family: "Tektur", system-ui;
+    color: orange;
     font-size: 1.9em ;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 /*******************************************************************************************/
@@ -248,8 +251,8 @@ body {
 .possibleMove {
     display: grid;
     position: absolute;
-    width: 90%;
-    height: 90%;
+    width: 40%;
+    height: 40%;
     padding: 0px;
     border: 4px double green;
     border-radius: 50%;
@@ -257,9 +260,9 @@ body {
     align-self: center;
     justify-self: center;
     margin: 0 auto;
-    z-index: 1001;
+    z-index: 1235;
     background-color: #47F5A1;
-    opacity: .5;
+    opacity: 1;
     cursor: pointer;
     /**pointer-events: none; */
 }
@@ -415,7 +418,37 @@ button:hover {
 
 
 /****************  MEDIA QUERIES ****************/  
+/**
+@media (max-width: 420px) { 
 
+  }
+
+
+
+@media (min-width: 670px) {
+
+    :root {
+        --tileSize: 70px;
+    }
+
+    .titleDiv span {
+      font-size: 4em;
+      height: fit-content;
+    }
+  
+    button:hover {
+      background-color: #ddd;
+      animation: glowing3 1200ms infinite;
+    }
+  
+    .matchButton:hover {
+      opacity: 0.5;
+    }
+
+    
+}
+
+*/
   
   
 @media (min-width: 749px) {
@@ -424,8 +457,8 @@ button:hover {
         --tileSize: 65px;
     }
 
-    .titleDiv span {
-      font-size: 4em;
+    .titleDiv a {
+      font-size: 3em;
       height: fit-content;
     }
   
