@@ -33,7 +33,17 @@ body {
 
 
 .highlight {
-    filter: drop-shadow(0px 0px 2px yellow ) !important;
+    /**
+    filter: drop-shadow(0px 0px 5px gold) !important;
+    box-shadow: 0px 0px 5px 2px gold;
+    */
+    z-index: 1233;
+    background-color: gold!important;
+}
+
+.bigger {
+    width: calc(1.25 * var(--tileSize)) !important;
+    height: calc(1.25 * var(--tileSize)) !important;
 }
 
 
@@ -91,15 +101,6 @@ body {
     grid-template-rows: 40px 40px 40px 40px 40px 40px 40px 40px;
     grid-template-columns: 40px 40px 40px 40px 40px 40px 40px 40px;
     justify-content: center;
-    width: 96vw;
-    height: 96vw;
-
-    //
-    display: flex;
-    max-width: 800px;
-    max-height: 800px;
-    min-width: fit-content;
-    min-height: fit-content;
     */
     justify-content: space-evenly;
     justify-self: center;
@@ -155,12 +156,14 @@ body {
 
 .darkTile {
     background-color: burlywood;
+    background-image: url("imgs/darkwoodTexture.jpg");
     /**background-image: url("imgs/darkwoodTexture.jpg"); background-image: url("imgs/lightwoodTexture.jpg"); color: white;*/
 }
 
 .lightTile {
     background-color: whitesmoke;
     color: black;
+    background-image: url("imgs/lightwoodTexture.jpg");
 }
 
 /*******************************************************************************************/
@@ -187,17 +190,17 @@ body {
 
 .wPawn {
     background-image: url("imgs/wPawn.png");
-    filter: drop-shadow(0px 0px 5px black );
+    filter: drop-shadow(0px 0px 2px black );
 }
 
 .bPawn {
     background-image: url("imgs/bPawn.png");
-    filter: drop-shadow(0px 0px 5px grey);
+    filter: drop-shadow(0px 0px 2px #47F5A1);
 }
 
 .wKnight {
     background-image: url("imgs/wKnight.png");
-    filter: drop-shadow(0px 0px 5px black );
+    filter: drop-shadow(0px 0px 2px black );
 }
 
 .bKnight {
@@ -207,7 +210,7 @@ body {
 
 .wBishop {
     background-image: url("imgs/wBishop.png");
-    filter: drop-shadow(0px 0px 5px black );
+    filter: drop-shadow(0px 0px 2px black );
 }
 
 .bBishop {
@@ -217,7 +220,7 @@ body {
 
 .wRook {
     background-image: url("imgs/wRook.png");
-    filter: drop-shadow(0px 0px 5px black );
+    filter: drop-shadow(0px 0px 2px black );
 }
 
 .bRook {
@@ -227,7 +230,7 @@ body {
 
 .wQueen {
     background-image: url("imgs/wQueen.png");
-    filter: drop-shadow(0px 0px 5px black );
+    filter: drop-shadow(0px 0px 2px black );
 }
 
 .bQueen {
@@ -237,7 +240,7 @@ body {
 
 .wKing {
     background-image: url("imgs/wKing.png");
-    filter: drop-shadow(0px 0px 5px black );
+    filter: drop-shadow(0px 0px 2px black );
 
 }
 
@@ -259,7 +262,6 @@ body {
     box-sizing: border-box;
     align-self: center;
     justify-self: center;
-    margin: 0 auto;
     z-index: 1235;
     background-color: #47F5A1;
     opacity: 1;
@@ -469,6 +471,12 @@ button:hover {
   
     .matchButton:hover {
       opacity: 0.5;
+    }
+
+    .possibleMove {
+        width: 40%;
+        height: 40%;
+        opacity: 1;
     }
 
     
