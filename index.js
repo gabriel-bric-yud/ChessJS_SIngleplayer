@@ -22,7 +22,6 @@ let dropSpot;
 let clicked;
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 window.addEventListener('selectstart', (e) => {
@@ -59,6 +58,7 @@ function startGame(msg) {
 }
 
 function nextTurn() {
+    /**
     document.querySelectorAll(`[data-color=${currentTurn}]`).forEach((elem) => {
         elem.classList.remove("highlight")
     })
@@ -67,6 +67,12 @@ function nextTurn() {
     document.querySelectorAll(`[data-color=${currentTurn}]`).forEach((elem) => {
         elem.classList.add("highlight")
     })
+    */
+    document.querySelectorAll(".gridTile").forEach((tile) => {
+        tile.classList.remove("highlight")
+    })
+    currentTurn == "white" ? currentTurn = "black" : currentTurn = "white";
+
 
     document.querySelectorAll('.possibleMove').forEach(item => {
         item.remove();
@@ -287,7 +293,8 @@ function createPossibleMove(row, col) {
     //console.log(`${col}${row}`)
     let tile = document.querySelector(`#${col}${row}`)
     if (tile.dataset.occupied == "true") {
-        //currentPossibleMove.style.backgroundColor = "red"
+        currentPossibleMove.style.backgroundColor = "red"
+        //tile.style.backgroundColor = "red"
         //currentPossibleMove.style.width = "30%";
         //currentPossibleMove.style.height = "30%";
     }
@@ -609,6 +616,11 @@ function createDraggable(elem) {
       dragParent = dragTarget.parentNode;
       if (dragTarget.dataset.color == currentTurn) {
         if (!clicked) {
+            document.querySelectorAll(".gridTile").forEach((tile) => {
+                tile.classList.remove("highlight")
+            })
+            dragTarget.classList.add("bigger")
+            dragParent.classList.add("highlight")
             checkPossibleMoves(dragTarget)
             createClickablePossibleMoves(dragTarget, dragParent) 
             dragTarget.style.cursor = "grabbing"
@@ -626,6 +638,7 @@ function createDraggable(elem) {
     elem.addEventListener('mouseup', (e) => { 
       if (dragTarget != "") {
         dragTarget.style.cursor = "grab"
+        dragTarget.classList.remove("bigger")
       }
       let currentMouse = {
         x : e.clientX,
@@ -680,7 +693,9 @@ function createDraggable(elem) {
         dragTarget = e.target;
         dragParent = dragTarget.parentNode;
         if (dragTarget.dataset.color == currentTurn) {
-                if (!clicked) {
+            if (!clicked) {
+                dragTarget.classList.add("bigger")
+                dragParent.classList.add("highlight")
                 checkPossibleMoves(dragTarget)
                 createClickablePossibleMoves(dragTarget, dragParent) 
                 dragTarget.style.cursor = "grabbing"
@@ -703,6 +718,8 @@ function createDraggable(elem) {
           x : e.changedTouches[0].clientX,
           y : e.changedTouches[0].clientY
         };
+
+        dragTarget.classList.remove("bigger")
 
         if (clicked == true) {
             for (let i = 0; i < possibleMovesList.length; i++) {
@@ -747,6 +764,7 @@ document.addEventListener('mousemove', (e) => {
     if (clicked == true) {
       dragTarget.style.left = (e.clientX + offSet[0]) + 'px'
       dragTarget.style.top = (e.clientY+ offSet[1]) + 'px' 
+      
     } 
 })
 
@@ -830,6 +848,7 @@ function fadeIn(elem, increment, interval) {
       } 
     }, interval) //20
 }
+
 
 
 
