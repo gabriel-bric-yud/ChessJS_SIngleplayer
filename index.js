@@ -285,7 +285,13 @@ function createPossibleMove(row, col) {
     let currentPossibleMove = document.createElement('div')
     currentPossibleMove.classList.add('possibleMove')
     //console.log(`${col}${row}`)
-    document.querySelector(`#${col}${row}`).appendChild(currentPossibleMove) 
+    let tile = document.querySelector(`#${col}${row}`)
+    if (tile.dataset.occupied == "true") {
+        //currentPossibleMove.style.backgroundColor = "red"
+        //currentPossibleMove.style.width = "30%";
+        //currentPossibleMove.style.height = "30%";
+    }
+    tile.appendChild(currentPossibleMove) 
     possibleMovesList.push(currentPossibleMove);
 }
 
@@ -604,6 +610,7 @@ function createDraggable(elem) {
       if (dragTarget.dataset.color == currentTurn) {
         if (!clicked) {
             checkPossibleMoves(dragTarget)
+            createClickablePossibleMoves(dragTarget, dragParent) 
             dragTarget.style.cursor = "grabbing"
             dragTarget.style.zIndex = 9999
             dragTarget.style.position = "absolute";
@@ -617,7 +624,6 @@ function createDraggable(elem) {
     })
   
     elem.addEventListener('mouseup', (e) => { 
-
       if (dragTarget != "") {
         dragTarget.style.cursor = "grab"
       }
@@ -676,6 +682,7 @@ function createDraggable(elem) {
         if (dragTarget.dataset.color == currentTurn) {
                 if (!clicked) {
                 checkPossibleMoves(dragTarget)
+                createClickablePossibleMoves(dragTarget, dragParent) 
                 dragTarget.style.cursor = "grabbing"
                 dragTarget.style.zIndex = 9999
                 dragTarget.style.position = "absolute";
@@ -762,6 +769,37 @@ function resetPiecePosition(elem, parent) {
 }
 
 
+
+function createClickablePossibleMoves(piece, oldParent) {
+
+    possibleMovesList.forEach((possibleMove) => {
+        possibleMove.addEventListener('click', (e) => { 
+            console.log(possibleMove.parentNode)
+            if (possibleMove.parentNode.dataset.occupied == "true") {
+                possibleMove.parentNode.querySelector(".chessPiece").remove();
+            }
+            oldParent.dataset.occupied = "false";
+        
+            piece.style.removeProperty('left');
+            piece.style.removeProperty('top');
+            piece.style.zIndex = 1234;
+            piece.style.position = "relative";
+        
+            possibleMove.parentNode.appendChild(piece);
+            possibleMove.parentNode.dataset.occupied = "true";
+            piece.dataset.position = possibleMove.parentNode.id;
+            piece.dataset.moved = "true";
+        
+            piece.dataset.colNum = possibleMove.parentNode.dataset.colNum;
+            piece.dataset.col = possibleMove.parentNode.dataset.col;
+            piece.dataset.row = possibleMove.parentNode.dataset.row;
+        
+            nextTurn();
+        })
+    })
+     
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function createErrorNotification(msg, parent) {
@@ -792,5 +830,6 @@ function fadeIn(elem, increment, interval) {
       } 
     }, interval) //20
 }
+
 
 
