@@ -692,7 +692,6 @@ function createDraggable(elem) {
      
     
     elem.addEventListener('touchend', (e) => { 
-        clicked = false;
         let currentTouch = {
           x : e.changedTouches[0].clientX,
           y : e.changedTouches[0].clientY
