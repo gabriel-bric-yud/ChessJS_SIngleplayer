@@ -173,7 +173,19 @@ function addChessPieces() {
 }
 
 
+function removePiece(piece) {
+    let array;
 
+    piece.dataset.color == "white" ? array = whitePiecesList : array = blackPiecesList;
+    console.log(array)
+    for (let i = 0; i < array.length; i++) {
+        if (piece == array[i]) {
+            array.splice(i, 1)
+            break;
+        }
+    }
+    piece.remove();
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function createBoard(pColor) {
@@ -503,6 +515,27 @@ function checkCastlingTiles(piece) {
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function checkForCheck(piece, targetSpot) {
+    let targetColumn = targetSpot.dataset.col;
+    let targetRow = targetSpot.dataset.row;
+
+    let currentColor = piece.dataset.color;
+    let enemyColor;
+    currentColor == "white" ? enemyColor = "black" : enemyColor = "white";
+
+    
+
+
+
+
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -635,7 +668,6 @@ function createKingPossibleMoves(piece) {
 
 function castleRook(piece, target) {
     if (piece.dataset.type ==  "King" && piece.dataset.moved == "false") {
-        console.log("helooooo")
         if (target.dataset.row == piece.dataset.row) {
             if (target.dataset.col == "G") {
                 let edgeTile = document.querySelector(`#H${piece.dataset.row}`)
@@ -764,7 +796,7 @@ function customMouseDragEvents(element, elementParent) {
       clicked = false;
       if (dropSpot != "") {
         if (dropSpot.dataset.occupied == "true") {
-            dropSpot.querySelector(".chessPiece").remove();
+            removePiece(dropSpot.querySelector(".chessPiece"))
         }
         elementParent.dataset.occupied = "false";
         castleRook(dragTarget, dropSpot) 
@@ -820,7 +852,7 @@ function customTouchDragEvents(element, elementParent) {
         clicked = false;
         if (dropSpot != "") {
             if (dropSpot.dataset.occupied == "true") {
-                dropSpot.querySelector(".chessPiece").remove();
+                removePiece(dropSpot.querySelector(".chessPiece"))
             }
             elementParent.dataset.occupied = "false";
             dropPiece(dragTarget, dropSpot)
@@ -867,7 +899,7 @@ function createClickablePossibleMoves(piece, oldParent) {
     possibleMovesList.forEach((possibleMove) => {
         possibleMove.addEventListener('click', (e) => { 
             if (possibleMove.parentNode.dataset.occupied == "true") {
-                possibleMove.parentNode.querySelector(".chessPiece").remove();
+                removePiece(possibleMove.parentNode.querySelector(".chessPiece"))
             }
             oldParent.dataset.occupied = "false";
 
