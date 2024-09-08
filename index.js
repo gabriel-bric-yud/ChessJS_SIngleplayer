@@ -74,11 +74,7 @@ function nextTurn() {
     currentTurn == "white" ? currentTurn = "black" : currentTurn = "white";
 
 
-    document.querySelectorAll('.possibleMove').forEach(item => {
-        //item.parentNode.classList.remove("possibleKillTile");
-        //item.parentNode.classList.remove("possibleMoveTile");
-        item.remove();
-    });
+    clearPossibleMoves()
 }
 
 
@@ -88,6 +84,7 @@ function clearBoard() {
     } 
     winnerDiv.classList.remove('show')
 }
+
 
 
 function reset() {
@@ -320,11 +317,16 @@ function createPossibleMove(row, col) {
     possibleMovesList.push(currentPossibleMove);
 }
 
-
-function checkPossibleMoves(piece) {
+function clearPossibleMoves() {
     document.querySelectorAll('.possibleMove').forEach(item => {
         item.remove();
     });
+    possibleMovesList = [];
+}
+
+
+function checkPossibleMoves(piece) {
+    clearPossibleMoves()
     possibleMovesList = [];
 
     switch(piece.dataset.type) {
@@ -520,18 +522,31 @@ function checkCastlingTiles(piece) {
 
 
 function checkForCheck(piece, targetSpot) {
-    let targetColumn = targetSpot.dataset.col;
-    let targetRow = targetSpot.dataset.row;
+    //let targetColumn = targetSpot.dataset.col;
+    //let targetRow = targetSpot.dataset.row;
 
-    let currentColor = piece.dataset.color;
-    let enemyColor;
-    currentColor == "white" ? enemyColor = "black" : enemyColor = "white";
-
+    if (piece.dataset.type == "King") {
+        let currentColor = piece.dataset.color;
+        let enemyColor;
+        currentColor == "white" ? enemyColor = "black" : enemyColor = "white";
+        let currentArray;
+        enemyColor == "black" ? currentArray = blackPiecesList : currentArray = whitePiecesList;
     
+        for (const item of currentArray) {
+            checkPossibleMoves(item)
+            for (const move of possibleMovesList) {
+                if (move.parentNode.id == targetSpot.id) {
+                    clearPossibleMoves()
+                    console.log("Check! can't go there!!!!")
+                    return true
+                }
+            }
+        }
 
+        checkPossibleMoves(piece)
+    }
 
-
-
+    return false;
 }
 
 
@@ -794,7 +809,7 @@ function customMouseDragEvents(element, elementParent) {
       }
 
       clicked = false;
-      if (dropSpot != "") {
+      if (dropSpot != "" && !checkForCheck(dragTarget, dropSpot)) {
         if (dropSpot.dataset.occupied == "true") {
             removePiece(dropSpot.querySelector(".chessPiece"))
         }
@@ -850,7 +865,7 @@ function customTouchDragEvents(element, elementParent) {
 
         dragTarget.classList.remove("bigger")
         clicked = false;
-        if (dropSpot != "") {
+        if (dropSpot != "" && !checkForCheck(dragTarget, dropSpot)) {
             if (dropSpot.dataset.occupied == "true") {
                 removePiece(dropSpot.querySelector(".chessPiece"))
             }
@@ -895,31 +910,23 @@ document.addEventListener('touchmove', (e) => {
 
 
 function createClickablePossibleMoves(piece, oldParent) {
-
     possibleMovesList.forEach((possibleMove) => {
         possibleMove.addEventListener('click', (e) => { 
-            if (possibleMove.parentNode.dataset.occupied == "true") {
-                removePiece(possibleMove.parentNode.querySelector(".chessPiece"))
+            if (!checkForCheck(piece, possibleMove.parentNode)) {
+                console.log(possibleMove)
+                console.log(possibleMove.parentNode)
+                if (possibleMove.parentNode.dataset.occupied == "true") {
+                    removePiece(possibleMove.parentNode.querySelector(".chessPiece"))
+                }
+                oldParent.dataset.occupied = "false";
+    
+                castleRook(piece, possibleMove.parentNode) 
+
+                dropPiece(piece, possibleMove.parentNode)
+            
+                nextTurn();
             }
-            oldParent.dataset.occupied = "false";
-
-            castleRook(piece, possibleMove.parentNode) 
-
-            piece.style.removeProperty('left');
-            piece.style.removeProperty('top');
-            piece.style.zIndex = 1234;
-            piece.style.position = "relative";
-        
-            possibleMove.parentNode.appendChild(piece);
-            possibleMove.parentNode.dataset.occupied = "true";
-            piece.dataset.position = possibleMove.parentNode.id;
-            piece.dataset.moved = "true";
-        
-            piece.dataset.colNum = possibleMove.parentNode.dataset.colNum;
-            piece.dataset.col = possibleMove.parentNode.dataset.col;
-            piece.dataset.row = possibleMove.parentNode.dataset.row;
-        
-            nextTurn();
+                   
         })
     })
      
