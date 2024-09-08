@@ -338,6 +338,7 @@ function checkPossibleMoves(piece) {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function checkVerticalTile(row, col, pColor, rowDistance, kill) {
     let nullBool;
@@ -469,6 +470,41 @@ function checkLTile(row, col, pColor, rowDistance, colDistance) {
 }
 
 
+function checkCastlingTiles(piece) {
+    if (piece.dataset.moved == "false") {
+        let currentRow = Number(piece.dataset.row);
+        let rookTile1 = document.querySelector(`#A${currentRow}`)
+        let rookTile2 = document.querySelector(`#H${currentRow}`)
+        console.log(rookTile1)
+        console.log(rookTile2)
+        if (rookTile1.dataset.occupied == "true") {
+            let rook1 = rookTile1.querySelector(".chessPiece");
+            if (rook1.dataset.type == "Rook" && rook1.dataset.color == piece.dataset.color) {
+                if (rook1.dataset.moved == "false") {
+                    if (document.querySelector(`#F${currentRow}`).dataset.occupied == "false" && document.querySelector(`#G${currentRow}`).dataset.occupied == "false") {
+                        createPossibleMove(currentRow, "G")
+                    }
+                }
+            }
+        }
+
+        if (rookTile2.dataset.occupied == "true") {
+            let rook2 = rookTile2.querySelector(".chessPiece");
+            if (rook2.dataset.type == "Rook" && rook2.dataset.color == piece.dataset.color) {
+                if (rook2.dataset.moved == "false") {
+                    if (document.querySelector(`#B${currentRow}`).dataset.occupied == "false" && document.querySelector(`#C${currentRow}`).dataset.occupied == "false" 
+                    && document.querySelector(`#D${currentRow}`).dataset.occupied == "false") {
+                        createPossibleMove(currentRow, "C")
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 function createPawnPossibleMoves(piece) {
 
@@ -590,42 +626,11 @@ function createKingPossibleMoves(piece) {
     checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, 1, -1, true, false)
     checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, -1, true, false)
     checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, 1, true, false)
-    createCastlePossibleMoves(piece)
+    checkCastlingTiles(piece)
 
 }
 
 
-
-function createCastlePossibleMoves(piece) {
-    if (piece.dataset.moved == "false") {
-        let currentRow = Number(piece.dataset.row);
-        let rookTile1 = document.querySelector(`#A${currentRow}`)
-        let rookTile2 = document.querySelector(`#H${currentRow}`)
-        console.log(rookTile1)
-        console.log(rookTile2)
-        if (rookTile1.dataset.occupied == "true") {
-            let rook1 = rookTile1.querySelector(".chessPiece");
-            if (rook1.dataset.type == "Rook" && rook1.dataset.color == piece.dataset.color) {
-                if (rook1.dataset.moved == "false") {
-                    if (document.querySelector(`#F${currentRow}`).dataset.occupied == "false" && document.querySelector(`#G${currentRow}`).dataset.occupied == "false") {
-                        createPossibleMove(currentRow, "G")
-                    }
-                }
-            }
-        }
-
-        if (rookTile2.dataset.occupied == "true") {
-            let rook2 = rookTile2.querySelector(".chessPiece");
-            if (rook2.dataset.type == "Rook" && rook2.dataset.color == piece.dataset.color) {
-                if (rook2.dataset.moved == "false") {
-                    if (document.querySelector(`#B${currentRow}`).dataset.occupied == "false" && document.querySelector(`#C${currentRow}`).dataset.occupied == "false" && document.querySelector(`#D${currentRow}`).dataset.occupied == "false") {
-                        createPossibleMove(currentRow, "C")
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 function castleRook(piece, target) {
@@ -918,7 +923,3 @@ function fadeIn(elem, increment, interval) {
       } 
     }, interval) //20
 }
-
-
-
-
