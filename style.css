@@ -38,6 +38,7 @@ body {
     box-shadow: 0px 0px 5px 2px gold;
     */
     z-index: 1233;
+    background-image: none !important;
     background-color: gold!important;
 }
 
@@ -137,6 +138,13 @@ body {
 }
 
 
+/**
+.gridTile:hover {
+    background-color: gold;
+    background-blend-mode: color-dodge;
+}
+*/
+
 
 .gridTileLabel {
     display: block; /**block;*/
@@ -145,7 +153,7 @@ body {
     margin: 0px;
     position: absolute;
     font-size: .6rem;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:Arial,'Segoe UI', Helvetica, sans-serif;
     box-sizing: border-box;
 }
 
@@ -156,8 +164,9 @@ body {
 
 .darkTile {
     background-color: burlywood;
+
     background-image: url("imgs/darkwoodTexture.jpg");
-    /**background-image: url("imgs/darkwoodTexture.jpg"); background-image: url("imgs/lightwoodTexture.jpg"); color: white;*/
+    /**color: white;background-image: url("imgs/darkwoodTexture.jpg"); background-image: url("imgs/lightwoodTexture.jpg")    background-blend-mode: darken;; color: white;*/
 }
 
 .lightTile {
@@ -166,19 +175,56 @@ body {
     background-image: url("imgs/lightwoodTexture.jpg");
 }
 
+
+/*******************************************************************************************/
+
+.possibleKillTile {
+    background-image: none !important;
+    background-color: red !important;
+}
+
+.possibleMoveTile {
+    background-image: none !important;
+    background-color: green !important;
+}
+
+
+.possibleMove {
+    display: grid;
+    position: absolute;
+    padding: 0px;
+    background-color: #47F5A1;  
+    width: 50%;
+    height: 50%; 
+    border: 6px double black;
+    border-radius: 50%;
+    box-sizing: border-box;
+    align-self: center;
+    justify-self: center;
+    z-index: 1235;
+    opacity: 1;
+    cursor: pointer;
+    /**
+    width: 100%;
+    height: 100%;
+    border: 6px double black;
+    background-color: transparent;
+    */
+}
+
 /*******************************************************************************************/
 
 .chessPiece {
     display: grid;
     padding: 0px;
-    width: calc(.95 * var(--tileSize));
-    height: calc(.95 * var(--tileSize));
+    width: calc(.98 * var(--tileSize));
+    height: calc(.98 * var(--tileSize));
     box-sizing: border-box;
     align-self: center;
     justify-self: center;
     margin: 0 auto;
     background-size:contain;
-    background-size: 80%;
+    background-size: 100%;
     background-repeat: no-repeat;
     background-position: center;
     /**box-shadow: 3px 5px 10px 5px rgba(0,0,0,0.75);*/
@@ -190,84 +236,65 @@ body {
 
 .wPawn {
     background-image: url("imgs/wPawn.png");
-    filter: drop-shadow(0px 0px 2px black );
+    /**filter: drop-shadow(0px 0px 2px black );*/
 }
 
 .bPawn {
     background-image: url("imgs/bPawn.png");
-    filter: drop-shadow(0px 0px 2px #47F5A1);
+    /**filter: drop-shadow(0px 0px 5px grey);*/
 }
 
 .wKnight {
     background-image: url("imgs/wKnight.png");
-    filter: drop-shadow(0px 0px 2px black );
+    /**filter: drop-shadow(0px 0px 2px black );*/
 }
 
 .bKnight {
     background-image: url("imgs/bKnight.png");
-    filter: drop-shadow(0px 0px 5px grey);
+    /**filter: drop-shadow(0px 0px 5px grey);*/
 }
 
 .wBishop {
     background-image: url("imgs/wBishop.png");
-    filter: drop-shadow(0px 0px 2px black );
+    /**filter: drop-shadow(0px 0px 2px black );*/
 }
 
 .bBishop {
     background-image: url("imgs/bBishop.png");
-    filter: drop-shadow(0px 0px 5px grey);
+    /**filter: drop-shadow(0px 0px 5px grey);*/
 }
 
 .wRook {
     background-image: url("imgs/wRook.png");
-    filter: drop-shadow(0px 0px 2px black );
+    /**filter: drop-shadow(0px 0px 2px black );*/
 }
 
 .bRook {
     background-image: url("imgs/bRook.png");
-    filter: drop-shadow(0px 0px 5px grey);
+    /**filter: drop-shadow(0px 0px 5px grey);*/
 }
 
 .wQueen {
     background-image: url("imgs/wQueen.png");
-    filter: drop-shadow(0px 0px 2px black );
+    /**filter: drop-shadow(0px 0px 2px black );*/
 }
 
 .bQueen {
     background-image: url("imgs/bQueen.png");
-    filter: drop-shadow(0px 0px 5px grey);
+    /**filter: drop-shadow(0px 0px 5px grey);*/
 }
 
 .wKing {
     background-image: url("imgs/wKing.png");
-    filter: drop-shadow(0px 0px 2px black );
+    /**filter: drop-shadow(0px 0px 2px black );*/
 
 }
 
 .bKing {
     background-image: url("imgs/bKing.png");
-    filter: drop-shadow(0px 0px 5px grey);
+    /**filter: drop-shadow(0px 0px 5px grey);*/
 }
 
-/*******************************************************************************************/
-
-.possibleMove {
-    display: grid;
-    position: absolute;
-    width: 40%;
-    height: 40%;
-    padding: 0px;
-    border: 4px double green;
-    border-radius: 50%;
-    box-sizing: border-box;
-    align-self: center;
-    justify-self: center;
-    z-index: 1235;
-    background-color: #47F5A1;
-    opacity: 1;
-    cursor: pointer;
-    /**pointer-events: none; */
-}
 
 /*******************************************************************************************/
 
@@ -473,12 +500,12 @@ button:hover {
       opacity: 0.5;
     }
 
+
     .possibleMove {
-        width: 40%;
-        height: 40%;
+        width: 50%;
+        height: 50%;
         opacity: 1;
     }
-
     
 }
 

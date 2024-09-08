@@ -75,6 +75,8 @@ function nextTurn() {
 
 
     document.querySelectorAll('.possibleMove').forEach(item => {
+        //item.parentNode.classList.remove("possibleKillTile");
+        //item.parentNode.classList.remove("possibleMoveTile");
         item.remove();
     });
 }
@@ -294,11 +296,15 @@ function createPossibleMove(row, col) {
     let tile = document.querySelector(`#${col}${row}`)
     if (tile.dataset.occupied == "true") {
         currentPossibleMove.style.backgroundColor = "red"
+        //tile.classList.add("possibleKillTile")
         //tile.style.backgroundColor = "red"
         //currentPossibleMove.style.width = "30%";
         //currentPossibleMove.style.height = "30%";
     }
-    tile.appendChild(currentPossibleMove) 
+    else {
+        //tile.classList.add("possibleMoveTile")
+    }
+    tile.appendChild(currentPossibleMove)
     possibleMovesList.push(currentPossibleMove);
 }
 
