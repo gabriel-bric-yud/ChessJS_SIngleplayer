@@ -44,8 +44,8 @@ body {
 }
 
 .bigger {
-    width: calc(1.25 * var(--tileSize)) !important;
-    height: calc(1.25 * var(--tileSize)) !important;
+    width: calc(1.5 * var(--tileSize)) !important;
+    height: calc(1.5 * var(--tileSize)) !important;
 }
 
 
@@ -502,6 +502,11 @@ button:hover {
         width: 50%;
         height: 50%;
         opacity: 1;
+    }
+
+    .bigger {
+        width: calc(1.1 * var(--tileSize)) !important;
+        height: calc(1.1 * var(--tileSize)) !important;
     }
     
 }
