@@ -371,6 +371,8 @@ function checkVerticalTile(row, col, pColor, rowDistance, kill) {
 }
 
 
+
+
 function checkHorizontalTile(row, col, pColor, colDistance, kill) {
     let nullBool;
     colDistance > 0 ? nullBool = (col + colDistance <= 7) : nullBool = (col + colDistance >= 0)
@@ -588,9 +590,78 @@ function createKingPossibleMoves(piece) {
     checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, 1, -1, true, false)
     checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, -1, true, false)
     checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, 1, true, false)
+    createCastlePossibleMoves(piece)
 
 }
 
+
+
+function createCastlePossibleMoves(piece) {
+    if (piece.dataset.moved == "false") {
+        let currentRow = Number(piece.dataset.row);
+        let rookTile1 = document.querySelector(`#A${currentRow}`)
+        let rookTile2 = document.querySelector(`#H${currentRow}`)
+        console.log(rookTile1)
+        console.log(rookTile2)
+        if (rookTile1.dataset.occupied == "true") {
+            let rook1 = rookTile1.querySelector(".chessPiece");
+            if (rook1.dataset.type == "Rook" && rook1.dataset.color == piece.dataset.color) {
+                if (rook1.dataset.moved == "false") {
+                    if (document.querySelector(`#F${currentRow}`).dataset.occupied == "false" && document.querySelector(`#G${currentRow}`).dataset.occupied == "false") {
+                        createPossibleMove(currentRow, "G")
+                    }
+                }
+            }
+        }
+
+        if (rookTile2.dataset.occupied == "true") {
+            let rook2 = rookTile2.querySelector(".chessPiece");
+            if (rook2.dataset.type == "Rook" && rook2.dataset.color == piece.dataset.color) {
+                if (rook2.dataset.moved == "false") {
+                    if (document.querySelector(`#B${currentRow}`).dataset.occupied == "false" && document.querySelector(`#C${currentRow}`).dataset.occupied == "false" && document.querySelector(`#D${currentRow}`).dataset.occupied == "false") {
+                        createPossibleMove(currentRow, "C")
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+function castleRook(piece, target) {
+    if (piece.dataset.type ==  "King" && piece.dataset.moved == "false") {
+        console.log("helooooo")
+        if (target.dataset.row == piece.dataset.row) {
+            if (target.dataset.col == "G") {
+                let edgeTile = document.querySelector(`#H${piece.dataset.row}`)
+                edgeTile.dataset.occupied = "false";
+                let currentRook = edgeTile.querySelector(".chessPiece")
+                let targetTile = document.querySelector(`#F${piece.dataset.row}`)
+                targetTile.appendChild(currentRook);
+                edgeTile.dataset.occupied = "true";
+                currentRook.dataset.position = targetTile.id;
+                currentRook.dataset.moved = "true";
+                currentRook.dataset.colNum = targetTile.dataset.colNum;
+                currentRook.dataset.col = targetTile.dataset.col;
+                currentRook.dataset.row = targetTile.dataset.row;
+            }
+            else if (target.dataset.col == "C") {
+                let edgeTile = document.querySelector(`#A${piece.dataset.row}`)
+                edgeTile.dataset.occupied = "false";
+                let currentRook = edgeTile.querySelector(".chessPiece")
+                let targetTile = document.querySelector(`#D${piece.dataset.row}`)
+                targetTile.appendChild(currentRook);
+                edgeTile.dataset.occupied = "true";
+                currentRook.dataset.position = targetTile.id;
+                currentRook.dataset.moved = "true";
+                currentRook.dataset.colNum = targetTile.dataset.colNum;
+                currentRook.dataset.col = targetTile.dataset.col;
+                currentRook.dataset.row = targetTile.dataset.row;
+            }
+
+        }
+    }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -607,41 +678,67 @@ function checkDrop(coordinate, container) {
   }
 }
 
+function startMovingPiece(piece, eventTarget) {
+    piece.style.cursor = "grabbing"
+    piece.style.zIndex = 9999
+    piece.style.position = "absolute";
+    piece.style.left = (eventTarget.clientX) - (piece.offsetWidth/2) + window.scrollX + 'px'
+    piece.style.top = (eventTarget.clientY) - (piece.offsetHeight/1.2) + window.scrollY + 'px'
+    document.body.appendChild(piece)
+    offSet = [piece.offsetLeft - eventTarget.clientX, piece.offsetTop - eventTarget.clientY]
+}
+
+function dropPiece(piece, targetSpot) {
+    piece.style.removeProperty('left');
+    piece.style.removeProperty('top');
+    piece.style.zIndex = 1234;
+    piece.style.position = "relative";
+
+    targetSpot.appendChild(piece);
+    targetSpot.dataset.occupied = "true";
+
+    piece.dataset.position = targetSpot.id;
+    piece.dataset.moved = "true";
+    piece.dataset.colNum = targetSpot.dataset.colNum;
+    piece.dataset.col = targetSpot.dataset.col;
+    piece.dataset.row = targetSpot.dataset.row;
+}
+
+
+function resetPiecePosition(elem, parent) {
+    elem.style.position = "relative";
+    elem.style.removeProperty('left');
+    elem.style.removeProperty('top');
+    elem.style.zIndex = 1234;
+    parent.appendChild(elem);
+}
 
 function clearDragInfo() {
-
     dropSpot = "";
 }
-  
 
-function createDraggable(elem) {
-    let dragParent;
-    elem.addEventListener('mousedown', (e) => {
+
+function customMouseDragEvents(element, elementParent) {
+    element.addEventListener('mousedown', (e) => {
       //e.preventDefault()
       dragTarget = e.target;
-      dragParent = dragTarget.parentNode;
+      elementParent = dragTarget.parentNode;
       if (dragTarget.dataset.color == currentTurn) {
         if (!clicked) {
             document.querySelectorAll(".gridTile").forEach((tile) => {
                 tile.classList.remove("highlight")
             })
             dragTarget.classList.add("bigger")
-            dragParent.classList.add("highlight")
+            elementParent.classList.add("highlight")
             checkPossibleMoves(dragTarget)
-            createClickablePossibleMoves(dragTarget, dragParent) 
-            dragTarget.style.cursor = "grabbing"
-            dragTarget.style.zIndex = 9999
-            dragTarget.style.position = "absolute";
-            dragTarget.style.left = (e.clientX) - (dragTarget.offsetWidth/2) + window.scrollX + 'px'
-            dragTarget.style.top = (e.clientY) - (dragTarget.offsetHeight/1.2) + window.scrollY + 'px'
-            document.body.appendChild(dragTarget)
-            offSet = [dragTarget.offsetLeft - e.clientX, dragTarget.offsetTop - e.clientY]
+            createClickablePossibleMoves(dragTarget, elementParent) 
+            startMovingPiece(dragTarget, e)
             clicked = true;
         }
       }
     })
   
-    elem.addEventListener('mouseup', (e) => { 
+    element.addEventListener('mouseup', (e) => { 
       if (dragTarget != "") {
         dragTarget.style.cursor = "grab"
         dragTarget.classList.remove("bigger")
@@ -660,57 +757,39 @@ function createDraggable(elem) {
       }
 
       clicked = false;
-      
       if (dropSpot != "") {
         if (dropSpot.dataset.occupied == "true") {
             dropSpot.querySelector(".chessPiece").remove();
         }
-        dragParent.dataset.occupied = "false";
-
-        dragTarget.style.removeProperty('left');
-        dragTarget.style.removeProperty('top');
-        dragTarget.style.zIndex = 1234;
-        dragTarget.style.position = "relative";
-
-        dropSpot.appendChild(dragTarget);
-        dropSpot.dataset.occupied = "true";
-        dragTarget.dataset.position = dropSpot.id;
-        dragTarget.dataset.moved = "true";
-
-        dragTarget.dataset.colNum = dropSpot.dataset.colNum;
-        dragTarget.dataset.col = dropSpot.dataset.col;
-        dragTarget.dataset.row = dropSpot.dataset.row;
-
+        elementParent.dataset.occupied = "false";
+        castleRook(dragTarget, dropSpot) 
+        dropPiece(dragTarget, dropSpot)
         nextTurn();
       }
       else {
-        resetPiecePosition(dragTarget, dragParent);
+        resetPiecePosition(dragTarget, elementParent);
       }
       clearDragInfo() 
     })
 
+}
 
 
-    elem.addEventListener('touchstart', (e) => {
+function customTouchDragEvents(element, elementParent) {
+    element.addEventListener('touchstart', (e) => {
         e.preventDefault()
         if (e.touches.length > 1) {  
           e.preventDefault();
         }
         dragTarget = e.target;
-        dragParent = dragTarget.parentNode;
+        elementParent = dragTarget.parentNode;
         if (dragTarget.dataset.color == currentTurn) {
             if (!clicked) {
                 dragTarget.classList.add("bigger")
-                dragParent.classList.add("highlight")
+                elementParent.classList.add("highlight")
                 checkPossibleMoves(dragTarget)
-                createClickablePossibleMoves(dragTarget, dragParent) 
-                dragTarget.style.cursor = "grabbing"
-                dragTarget.style.zIndex = 9999
-                dragTarget.style.position = "absolute";
-                dragTarget.style.left = (e.touches[0].clientX) - (dragTarget.offsetWidth/2) + window.scrollX + 'px'
-                dragTarget.style.top = (e.touches[0].clientY) - (dragTarget.offsetHeight/1.2) + window.scrollY + 'px'
-                document.body.appendChild(dragTarget)
-                offSet = [dragTarget.offsetLeft - e.touches[0].clientX, dragTarget.offsetTop - e.touches[0].clientY]
+                createClickablePossibleMoves(dragTarget, elementParent) 
+                startMovingPiece(dragTarget, e.touches[0])
                 clicked = true 
             }
         }
@@ -719,14 +798,11 @@ function createDraggable(elem) {
     
      
     
-    elem.addEventListener('touchend', (e) => { 
+    element.addEventListener('touchend', (e) => { 
         let currentTouch = {
           x : e.changedTouches[0].clientX,
           y : e.changedTouches[0].clientY
         };
-
-        dragTarget.classList.remove("bigger")
-
         if (clicked == true) {
             for (let i = 0; i < possibleMovesList.length; i++) {
                 if (checkDrop(currentTouch, possibleMovesList[i].parentNode)) {
@@ -734,43 +810,37 @@ function createDraggable(elem) {
                 }
             }
         }
-    
+
+        dragTarget.classList.remove("bigger")
         clicked = false;
-          
         if (dropSpot != "") {
             if (dropSpot.dataset.occupied == "true") {
                 dropSpot.querySelector(".chessPiece").remove();
             }
-            dragParent.dataset.occupied = "false";
-    
-            dragTarget.style.removeProperty('left');
-            dragTarget.style.removeProperty('top');
-            dragTarget.style.zIndex = 1234;
-            dragTarget.style.position = "relative";
-    
-            dropSpot.appendChild(dragTarget);
-            dropSpot.dataset.occupied = "true";
-            dragTarget.dataset.position = dropSpot.id;
-            dragTarget.dataset.moved = "true";
-    
-            dragTarget.dataset.colNum = dropSpot.dataset.colNum;
-            dragTarget.dataset.col = dropSpot.dataset.col;
-            dragTarget.dataset.row = dropSpot.dataset.row;
-    
+            elementParent.dataset.occupied = "false";
+            dropPiece(dragTarget, dropSpot)
             nextTurn();
         }
         else {
-            resetPiecePosition(dragTarget, dragParent);
+            resetPiecePosition(dragTarget, elementParent);
         }
+
         clearDragInfo()
     }) 
+
+}
+
+
+function createDraggable(elem) {
+    let dragParent;
+    customMouseDragEvents(elem, dragParent)
+    customTouchDragEvents(elem, dragParent)
 }
 
 document.addEventListener('mousemove', (e) => {
     if (clicked == true) {
       dragTarget.style.left = (e.clientX + offSet[0]) + 'px'
       dragTarget.style.top = (e.clientY+ offSet[1]) + 'px' 
-      
     } 
 })
 
@@ -784,13 +854,6 @@ document.addEventListener('touchmove', (e) => {
     } 
 }, { passive: false})
 
-function resetPiecePosition(elem, parent) {
-    elem.style.position = "relative";
-    elem.style.removeProperty('left');
-    elem.style.removeProperty('top');
-    elem.style.zIndex = 1234;
-    parent.appendChild(elem);
-}
 
 
 
@@ -798,12 +861,13 @@ function createClickablePossibleMoves(piece, oldParent) {
 
     possibleMovesList.forEach((possibleMove) => {
         possibleMove.addEventListener('click', (e) => { 
-            console.log(possibleMove.parentNode)
             if (possibleMove.parentNode.dataset.occupied == "true") {
                 possibleMove.parentNode.querySelector(".chessPiece").remove();
             }
             oldParent.dataset.occupied = "false";
-        
+
+            castleRook(piece, possibleMove.parentNode) 
+
             piece.style.removeProperty('left');
             piece.style.removeProperty('top');
             piece.style.zIndex = 1234;
