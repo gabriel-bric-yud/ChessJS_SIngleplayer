@@ -16,6 +16,7 @@ let whitePiecesList = [];
 let blackPiecesList = [];
 let boardTiles = [];
 let possibleMovesList = [];
+let enemyMovesList = [];
 let currentTurn = "black";
 let dragTarget;
 let dropSpot;
@@ -75,6 +76,7 @@ function nextTurn() {
 
 
     clearPossibleMoves()
+    //clearPossibleMoves(enemyMovesList)
 }
 
 
@@ -113,6 +115,9 @@ function createChessPiece(pType, color, startingPosition) {
     currentChessPiece.classList.add(color.substring(0, 1) + pType);
     currentChessPiece.dataset.color = color;
     currentChessPiece.dataset.type = pType;
+    if (pType == "King") {
+        currentChessPiece.dataset.check = "false";
+    }
     currentChessPiece.dataset.row = currentPosition.dataset.row;
     currentChessPiece.dataset.colNum = currentPosition.dataset.colNum;
     currentChessPiece.dataset.col = currentPosition.dataset.col;
@@ -298,7 +303,7 @@ function createTileColor(gridTile, r, c) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function createPossibleMove(row, col) {
+function createPossibleMove(row, col, array) {
     let currentPossibleMove = document.createElement('div')
     currentPossibleMove.classList.add('possibleMove')
     //console.log(`${col}${row}`)
@@ -314,7 +319,8 @@ function createPossibleMove(row, col) {
         //tile.classList.add("possibleMoveTile")
     }
     tile.appendChild(currentPossibleMove)
-    possibleMovesList.push(currentPossibleMove);
+    console.log(array)
+    array.push(currentPossibleMove);
 }
 
 function clearPossibleMoves() {
@@ -324,29 +330,26 @@ function clearPossibleMoves() {
     possibleMovesList = [];
 }
 
-
-function checkPossibleMoves(piece) {
-    clearPossibleMoves()
-    possibleMovesList = [];
+function checkPossibleMoves(piece, array) {
 
     switch(piece.dataset.type) {
         case "Pawn":
-            createPawnPossibleMoves(piece)
+            createPawnPossibleMoves(piece, array)
             break;
         case "Rook":
-            createRookPossibleMoves(piece) 
+            createRookPossibleMoves(piece, array) 
             break; 
         case "Bishop":
-            createBishopPossibleMoves(piece)
+            createBishopPossibleMoves(piece, array)
             break; 
         case "Knight":
-            createKnightPossibleMoves(piece)
+            createKnightPossibleMoves(piece, array)
             break; 
         case "Queen":
-            createQueenPossibleMoves(piece)
+            createQueenPossibleMoves(piece, array)
             break; 
         case "King":
-            createKingPossibleMoves(piece)
+            createKingPossibleMoves(piece, array)
             break; 
     }
 
@@ -354,7 +357,7 @@ function checkPossibleMoves(piece) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function checkVerticalTile(row, col, pColor, rowDistance, kill) {
+function checkVerticalTile(row, col, pColor, rowDistance, kill, array) {
     let nullBool;
     rowDistance > 0 ? nullBool = (row + rowDistance <= 8) :  nullBool = (row + rowDistance >= 1)
 
@@ -364,18 +367,18 @@ function checkVerticalTile(row, col, pColor, rowDistance, kill) {
         if (kill == true) {
             if (verticalTile.dataset.occupied == "true") {
                 if (verticalTile.querySelector(".chessPiece").dataset.color != pColor) {
-                    createPossibleMove(targetTileRow, alphabet[col])
+                    createPossibleMove(targetTileRow, alphabet[col], array)
                 }
                 return false;
             }
             else {
-                createPossibleMove(targetTileRow, alphabet[col])
+                createPossibleMove(targetTileRow, alphabet[col], array)
                 return true 
             }
         }
         else {
             if (verticalTile.dataset.occupied == "false") { //check tile infront
-                createPossibleMove(targetTileRow, alphabet[col])
+                createPossibleMove(targetTileRow, alphabet[col], array)
                 return true;
             }
             else {
@@ -388,7 +391,7 @@ function checkVerticalTile(row, col, pColor, rowDistance, kill) {
 
 
 
-function checkHorizontalTile(row, col, pColor, colDistance, kill) {
+function checkHorizontalTile(row, col, pColor, colDistance, kill, array) {
     let nullBool;
     colDistance > 0 ? nullBool = (col + colDistance <= 7) : nullBool = (col + colDistance >= 0)
 
@@ -398,18 +401,18 @@ function checkHorizontalTile(row, col, pColor, colDistance, kill) {
         if (kill == true) {
             if (horizontalTile.dataset.occupied == "true") {
                 if (horizontalTile.querySelector(".chessPiece").dataset.color != pColor) {
-                    createPossibleMove(row, targetTileColumn)    
+                    createPossibleMove(row, targetTileColumn, array)    
                 }
                 return false;
             }
             else {
-                createPossibleMove(row, targetTileColumn)    
+                createPossibleMove(row, targetTileColumn, array)    
                 return true 
             }
         }
         else {
             if (horizontalTile.dataset.occupied == "false") { //check tile infront
-                createPossibleMove(row, targetTileColumn)
+                createPossibleMove(row, targetTileColumn, array)
                 return true;
             }
             else {
@@ -419,7 +422,7 @@ function checkHorizontalTile(row, col, pColor, colDistance, kill) {
     }
 }
 
-function checkDiagonalTile(row, col, pColor, rowDistance, colDistance, kill, passive) {
+function checkDiagonalTile(row, col, pColor, rowDistance, colDistance, kill, passive, array) {
     let rowNullBool
     let colNullBool
 
@@ -435,13 +438,13 @@ function checkDiagonalTile(row, col, pColor, rowDistance, colDistance, kill, pas
         if (kill == true) {
             if (diagonalMove.dataset.occupied == "true") {
                 if (diagonalMove.querySelector(".chessPiece").dataset.color != pColor) { 
-                    createPossibleMove(targetTileRow, targetTileColumn)
+                    createPossibleMove(targetTileRow, targetTileColumn, array)
                 }
                 return false;
             }
             else {
                 if (passive == false) {
-                    createPossibleMove(targetTileRow, targetTileColumn)
+                    createPossibleMove(targetTileRow, targetTileColumn, array)
                     return true;
                 }
                 return false;
@@ -449,7 +452,7 @@ function checkDiagonalTile(row, col, pColor, rowDistance, colDistance, kill, pas
         }
         else {
             if (diagonalMove.dataset.occupied == "false" && passive == false) { 
-                createPossibleMove(targetTileRow, targetTileColumn)
+                createPossibleMove(targetTileRow, targetTileColumn, array)
                 return true;
             }
             else {
@@ -461,7 +464,7 @@ function checkDiagonalTile(row, col, pColor, rowDistance, colDistance, kill, pas
 
 
 
-function checkLTile(row, col, pColor, rowDistance, colDistance) {
+function checkLTile(row, col, pColor, rowDistance, colDistance, array) {
 
     let rowNullBool
     let colNullBool
@@ -474,51 +477,23 @@ function checkLTile(row, col, pColor, rowDistance, colDistance) {
         let targetTileRow = row + rowDistance;
         let currentTargetTile = document.querySelector(`#${targetTileColumn}${targetTileRow}`)
         if (currentTargetTile.dataset.occupied == "false") {
-            createPossibleMove(targetTileRow, targetTileColumn)
+            createPossibleMove(targetTileRow, targetTileColumn, array)
         }
         else if (currentTargetTile.querySelector(".chessPiece").dataset.color != pColor)  {
-            createPossibleMove(targetTileRow, targetTileColumn);
+            createPossibleMove(targetTileRow, targetTileColumn, array);
         }    
     }
 
 }
 
 
-function checkCastlingTiles(piece) {
-    if (piece.dataset.moved == "false") {
-        let currentRow = Number(piece.dataset.row);
-        let rookTile1 = document.querySelector(`#A${currentRow}`)
-        let rookTile2 = document.querySelector(`#H${currentRow}`)
-        console.log(rookTile1)
-        console.log(rookTile2)
-        if (rookTile1.dataset.occupied == "true") {
-            let rook1 = rookTile1.querySelector(".chessPiece");
-            if (rook1.dataset.type == "Rook" && rook1.dataset.color == piece.dataset.color) {
-                if (rook1.dataset.moved == "false") {
-                    if (document.querySelector(`#F${currentRow}`).dataset.occupied == "false" && document.querySelector(`#G${currentRow}`).dataset.occupied == "false") {
-                        createPossibleMove(currentRow, "G")
-                    }
-                }
-            }
-        }
 
-        if (rookTile2.dataset.occupied == "true") {
-            let rook2 = rookTile2.querySelector(".chessPiece");
-            if (rook2.dataset.type == "Rook" && rook2.dataset.color == piece.dataset.color) {
-                if (rook2.dataset.moved == "false") {
-                    if (document.querySelector(`#B${currentRow}`).dataset.occupied == "false" && document.querySelector(`#C${currentRow}`).dataset.occupied == "false" 
-                    && document.querySelector(`#D${currentRow}`).dataset.occupied == "false") {
-                        createPossibleMove(currentRow, "C")
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 function checkForCheck(piece, targetSpot) {
@@ -533,20 +508,27 @@ function checkForCheck(piece, targetSpot) {
         enemyColor == "black" ? currentArray = blackPiecesList : currentArray = whitePiecesList;
     
         for (const item of currentArray) {
-            checkPossibleMoves(item)
+            checkPossibleMoves(item, enemyMovesList)
             for (const move of possibleMovesList) {
                 if (move.parentNode.id == targetSpot.id) {
-                    clearPossibleMoves()
+                    move.parentNode.querySelectorAll(".possibleMove").forEach((elem) => {
+                        elem.remove();
+                    })
+                    enemyMovesList.forEach((elem) => {
+                        elem.remove();
+                    })
+                    enemyMovesList = [];
+                    
                     console.log("Check! can't go there!!!!")
-                    return true
+                    //return true
                 }
             }
         }
 
-        checkPossibleMoves(piece)
+        //checkPossibleMoves(piece)
     }
 
-    return false;
+    //return false;
 }
 
 
@@ -554,56 +536,56 @@ function checkForCheck(piece, targetSpot) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function createPawnPossibleMoves(piece) {
+function createPawnPossibleMoves(piece, array) {
 
     let currentColNum = Number(piece.dataset.colNum);
     let currentRow = Number(piece.dataset.row);
 
     if (piece.dataset.color == "white") {
-        if (checkVerticalTile(currentRow, currentColNum, "white", 1, false)) { // check first tile
-            if (piece.dataset.moved == "false") {checkVerticalTile(currentRow, currentColNum, "white", 2, false)} // check second tile
+        if (checkVerticalTile(currentRow, currentColNum, "white", 1, false, array)) { // check first tile
+            if (piece.dataset.moved == "false") {checkVerticalTile(currentRow, currentColNum, "white", 2, false, array)} // check second tile
         }
 
-        checkDiagonalTile(currentRow, currentColNum, "white", 1, 1, true, true)
-        checkDiagonalTile(currentRow, currentColNum, "white", 1, -1, true, true) 
+        checkDiagonalTile(currentRow, currentColNum, "white", 1, 1, true, true, array)
+        checkDiagonalTile(currentRow, currentColNum, "white", 1, -1, true, true, array) 
     }
     else {
-        if (checkVerticalTile(currentRow, currentColNum, "black", -1, false)) { // check first tile
-            if (piece.dataset.moved == "false") {checkVerticalTile(currentRow, currentColNum, "black", -2, false)} // check second tile
+        if (checkVerticalTile(currentRow, currentColNum, "black", -1, false, array)) { // check first tile
+            if (piece.dataset.moved == "false") {checkVerticalTile(currentRow, currentColNum, "black", -2, false, array)} // check second tile
         }
 
-        checkDiagonalTile(currentRow, currentColNum, "black", -1, 1, true, true)
-        checkDiagonalTile(currentRow, currentColNum, "black", -1, -1, true, true)  
+        checkDiagonalTile(currentRow, currentColNum, "black", -1, 1, true, true, array)
+        checkDiagonalTile(currentRow, currentColNum, "black", -1, -1, true, true, array)  
     }
 }
 
 
-function createRookPossibleMoves(piece) {
+function createRookPossibleMoves(piece, array) {
     let currentColNum = Number(piece.dataset.colNum);
     let currentRow = Number(piece.dataset.row);
 
     let colDistance = 1;
-    while (checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, colDistance, true)) {
+    while (checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, colDistance, true, array)) {
         colDistance++
     }
 
     colDistance = -1;
-    while (checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, colDistance, true)) {
+    while (checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, colDistance, true, array)) {
         colDistance--
     }
 
     let rowDistance = 1;
-    while (checkVerticalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, true, false)) {
+    while (checkVerticalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, true, array)) {
         rowDistance++
     }
 
     rowDistance = -1;
-    while (checkVerticalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, true, false)) {
+    while (checkVerticalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, true, array)) {
         rowDistance--
     }
 }
 
-function createBishopPossibleMoves(piece) {
+function createBishopPossibleMoves(piece, array) {
     let currentColNum = Number(piece.dataset.colNum);
     let currentRow = Number(piece.dataset.row);
 
@@ -612,28 +594,28 @@ function createBishopPossibleMoves(piece) {
 
     let rowDistance = 1;
     let colDistance = 1;
-    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false)) {
+    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false, array)) {
         rowDistance++
         colDistance++
     }
 
     rowDistance = 1;
     colDistance = -1;
-    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false)) {
+    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false, array)) {
         rowDistance++
         colDistance--
     }
 
     rowDistance = -1;
     colDistance = -1;
-    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false)) {
+    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false, array)) {
         rowDistance--
         colDistance--
     }
 
     rowDistance = -1;
     colDistance = 1;
-    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false)) {
+    while (checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, rowDistance, colDistance, true, false, array)) {
         rowDistance--
         colDistance++
     }
@@ -641,44 +623,74 @@ function createBishopPossibleMoves(piece) {
 
 
 
-function createKnightPossibleMoves(piece) {
+function createKnightPossibleMoves(piece, array) {
     let currentColNum = Number(piece.dataset.colNum);
     let currentRow = Number(piece.dataset.row);
 
-    checkLTile(currentRow, currentColNum, piece.dataset.color, 2, 1)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, 2, -1)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, -2, 1)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, -2, -1)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, 1, 2)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, 1, -2)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, -1, 2)
-    checkLTile(currentRow, currentColNum, piece.dataset.color, -1, -2)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, 2, 1, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, 2, -1, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, -2, 1, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, -2, -1, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, 1, 2, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, 1, -2, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, -1, 2, array)
+    checkLTile(currentRow, currentColNum, piece.dataset.color, -1, -2, array)
 
 }
 
 
-function createQueenPossibleMoves(piece) {
-    createRookPossibleMoves(piece)
-    createBishopPossibleMoves(piece)
+function createQueenPossibleMoves(piece, array) {
+    createRookPossibleMoves(piece, array)
+    createBishopPossibleMoves(piece, array)
 }
 
-function createKingPossibleMoves(piece) {
+function createKingPossibleMoves(piece, array) {
     let currentColNum = Number(piece.dataset.colNum);
     let currentRow = Number(piece.dataset.row);
 
-    checkVerticalTile(currentRow, currentColNum, piece.dataset.color, 1, true, false)
-    checkVerticalTile(currentRow, currentColNum, piece.dataset.color, -1, true, false)
-    checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, 1, true)
-    checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, -1, true)
-    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, 1, 1, true, false)
-    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, 1, -1, true, false)
-    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, -1, true, false)
-    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, 1, true, false)
-    checkCastlingTiles(piece)
+    checkVerticalTile(currentRow, currentColNum, piece.dataset.color, 1, true, array)
+    checkVerticalTile(currentRow, currentColNum, piece.dataset.color, -1, true, array)
+    checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, 1, true, array)
+    checkHorizontalTile(currentRow, currentColNum, piece.dataset.color, -1, true, array)
+    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, 1, 1, true, false, array)
+    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, 1, -1, true, false, array)
+    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, -1, true, false, array)
+    checkDiagonalTile(currentRow, currentColNum, piece.dataset.color, -1, 1, true, false, array)
+    checkCastlingTiles(piece, array)
 
 }
 
+function checkCastlingTiles(piece, array) {
+    if (piece.dataset.moved == "false") {
+        let currentRow = Number(piece.dataset.row);
+        let rookTile1 = document.querySelector(`#A${currentRow}`)
+        let rookTile2 = document.querySelector(`#H${currentRow}`)
+        console.log(rookTile1)
+        console.log(rookTile2)
+        if (rookTile1.dataset.occupied == "true") {
+            let rook1 = rookTile1.querySelector(".chessPiece");
+            if (rook1.dataset.type == "Rook" && rook1.dataset.color == piece.dataset.color) {
+                if (rook1.dataset.moved == "false") {
+                    if (document.querySelector(`#F${currentRow}`).dataset.occupied == "false" && document.querySelector(`#G${currentRow}`).dataset.occupied == "false") {
+                        createPossibleMove(currentRow, "G", array)
+                    }
+                }
+            }
+        }
 
+        if (rookTile2.dataset.occupied == "true") {
+            let rook2 = rookTile2.querySelector(".chessPiece");
+            if (rook2.dataset.type == "Rook" && rook2.dataset.color == piece.dataset.color) {
+                if (rook2.dataset.moved == "false") {
+                    if (document.querySelector(`#B${currentRow}`).dataset.occupied == "false" && document.querySelector(`#C${currentRow}`).dataset.occupied == "false" 
+                    && document.querySelector(`#D${currentRow}`).dataset.occupied == "false") {
+                        createPossibleMove(currentRow, "C", array)
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 function castleRook(piece, target) {
@@ -773,55 +785,63 @@ function clearDragInfo() {
 function customMouseDragEvents(element, elementParent) {
     element.addEventListener('mousedown', (e) => {
       //e.preventDefault()
-      dragTarget = e.target;
-      elementParent = dragTarget.parentNode;
-      if (dragTarget.dataset.color == currentTurn) {
-        if (!clicked) {
-            document.querySelectorAll(".gridTile").forEach((tile) => {
-                tile.classList.remove("highlight")
-            })
-            dragTarget.classList.add("bigger")
-            elementParent.classList.add("highlight")
-            checkPossibleMoves(dragTarget)
-            createClickablePossibleMoves(dragTarget, elementParent) 
-            startMovingPiece(dragTarget, e)
-            clicked = true;
+        
+        
+
+        if (e.target.dataset.color == currentTurn) {
+            if (!clicked) {
+                dragTarget = e.target;
+                elementParent = dragTarget.parentNode;
+                clearPossibleMoves()
+                document.querySelectorAll(".gridTile").forEach((tile) => {
+                    tile.classList.remove("highlight")
+                })
+                dragTarget.classList.add("bigger")
+                elementParent.classList.add("highlight")
+                checkPossibleMoves(dragTarget, possibleMovesList)
+                createClickablePossibleMoves(dragTarget, elementParent) 
+                startMovingPiece(dragTarget, e)
+                clicked = true;
+            }
         }
-      }
     })
   
     element.addEventListener('mouseup', (e) => { 
-      if (dragTarget != "") {
-        dragTarget.style.cursor = "grab"
-        dragTarget.classList.remove("bigger")
-      }
-      let currentMouse = {
-        x : e.clientX,
-        y : e.clientY
-      };
+        if (dragTarget != "") {
+            dragTarget.style.cursor = "grab"
+            dragTarget.classList.remove("bigger")
+        }
+        let currentMouse = {
+            x : e.clientX,
+            y : e.clientY
+        };
 
-      if (clicked == true) {
-        for (let i = 0; i < possibleMovesList.length; i++) {
-            if (checkDrop(currentMouse, possibleMovesList[i].parentNode)) {
-                break;
+        if (clicked == true) {
+            //console.log(possibleMovesList)
+            //console.log(possibleMovesList[0].parentNode)
+            for (let i = 0; i < possibleMovesList.length; i++) {
+                if (checkDrop(currentMouse, possibleMovesList[i].parentNode)) {
+                    break;
+                }
             }
         }
-      }
 
-      clicked = false;
-      if (dropSpot != "" && !checkForCheck(dragTarget, dropSpot)) {
-        if (dropSpot.dataset.occupied == "true") {
-            removePiece(dropSpot.querySelector(".chessPiece"))
+        clicked = false;
+        if (dropSpot != "") {
+        //if (dropSpot != "") {
+            //checkForCheck(dragTarget, dropSpot, enemyMovesList)
+            if (dropSpot.dataset.occupied == "true") {
+                removePiece(dropSpot.querySelector(".chessPiece"))
+            }
+            elementParent.dataset.occupied = "false";
+            castleRook(dragTarget, dropSpot) 
+            dropPiece(dragTarget, dropSpot)
+            nextTurn();
         }
-        elementParent.dataset.occupied = "false";
-        castleRook(dragTarget, dropSpot) 
-        dropPiece(dragTarget, dropSpot)
-        nextTurn();
-      }
-      else {
-        resetPiecePosition(dragTarget, elementParent);
-      }
-      clearDragInfo() 
+        else {
+            resetPiecePosition(dragTarget, elementParent);
+        }
+        clearDragInfo() 
     })
 
 }
@@ -833,13 +853,16 @@ function customTouchDragEvents(element, elementParent) {
         if (e.touches.length > 1) {  
           e.preventDefault();
         }
-        dragTarget = e.target;
-        elementParent = dragTarget.parentNode;
-        if (dragTarget.dataset.color == currentTurn) {
+
+
+        if (e.target.dataset.color == currentTurn) {
             if (!clicked) {
+                dragTarget = e.target;
+                elementParent = dragTarget.parentNode;
+                clearPossibleMoves()
                 dragTarget.classList.add("bigger")
                 elementParent.classList.add("highlight")
-                checkPossibleMoves(dragTarget)
+                checkPossibleMoves(dragTarget, possibleMovesList)
                 createClickablePossibleMoves(dragTarget, elementParent) 
                 startMovingPiece(dragTarget, e.touches[0])
                 clicked = true 
@@ -852,8 +875,8 @@ function customTouchDragEvents(element, elementParent) {
     
     element.addEventListener('touchend', (e) => { 
         let currentTouch = {
-          x : e.changedTouches[0].clientX,
-          y : e.changedTouches[0].clientY
+            x : e.changedTouches[0].clientX,
+            y : e.changedTouches[0].clientY
         };
         if (clicked == true) {
             for (let i = 0; i < possibleMovesList.length; i++) {
@@ -865,7 +888,9 @@ function customTouchDragEvents(element, elementParent) {
 
         dragTarget.classList.remove("bigger")
         clicked = false;
-        if (dropSpot != "" && !checkForCheck(dragTarget, dropSpot)) {
+        if (dropSpot != "") {
+        //if (dropSpot != "") {
+            //checkForCheck(dragTarget, dropSpot, enemyMovesList)
             if (dropSpot.dataset.occupied == "true") {
                 removePiece(dropSpot.querySelector(".chessPiece"))
             }
@@ -911,21 +936,18 @@ document.addEventListener('touchmove', (e) => {
 
 function createClickablePossibleMoves(piece, oldParent) {
     possibleMovesList.forEach((possibleMove) => {
-        possibleMove.addEventListener('click', (e) => { 
-            if (!checkForCheck(piece, possibleMove.parentNode)) {
-                console.log(possibleMove)
-                console.log(possibleMove.parentNode)
-                if (possibleMove.parentNode.dataset.occupied == "true") {
-                    removePiece(possibleMove.parentNode.querySelector(".chessPiece"))
-                }
-                oldParent.dataset.occupied = "false";
-    
-                castleRook(piece, possibleMove.parentNode) 
-
-                dropPiece(piece, possibleMove.parentNode)
-            
-                nextTurn();
+        possibleMove.addEventListener('click', (e) => {
+            //checkForCheck(piece, possibleMove.parentNode, enemyMovesList)
+            console.log(possibleMove)
+            console.log(possibleMove.parentNode)
+            if (possibleMove.parentNode.dataset.occupied == "true") {
+                removePiece(possibleMove.parentNode.querySelector(".chessPiece"))
             }
+            oldParent.dataset.occupied = "false";
+    
+            castleRook(piece, possibleMove.parentNode) 
+            dropPiece(piece, possibleMove.parentNode)
+            nextTurn();
                    
         })
     })
