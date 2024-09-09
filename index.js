@@ -860,6 +860,9 @@ function customTouchDragEvents(element, elementParent) {
                 dragTarget = e.target;
                 elementParent = dragTarget.parentNode;
                 clearPossibleMoves()
+                document.querySelectorAll(".gridTile").forEach((tile) => {
+                    tile.classList.remove("highlight")
+                })
                 dragTarget.classList.add("bigger")
                 elementParent.classList.add("highlight")
                 checkPossibleMoves(dragTarget, possibleMovesList)
