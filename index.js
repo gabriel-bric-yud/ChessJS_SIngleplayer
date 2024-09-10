@@ -1106,6 +1106,7 @@ document.addEventListener('touchmove', (e) => {
 function createClickablePossibleMoves(piece, oldParent) {
     document.querySelectorAll(".possibleMove").forEach((possibleMove) => {
         possibleMove.addEventListener('click', (e) => {
+            piece.classList.remove("bigger")
 
             castleRook(piece, possibleMove.parentNode)
             if (dropPiece(piece, possibleMove.parentNode, oldParent)) {
