@@ -5,6 +5,7 @@ const userInterface = document.getElementById('userInterface')
 const setUp = document.querySelector('#setUp')
 const singlePlayer = document.getElementById('singlePlayer');
 const selectColor = document.getElementById('selectColor')
+const boardDecor = document.getElementById("boardDecor")
 const optionsContainer = document.getElementById('optionsContainer')
 const restartText = document.querySelector('#rematchHeader')
 const resultTxt = document.getElementById('resultTxt')
@@ -33,17 +34,37 @@ window.addEventListener('selectstart', (e) => {
 
 singlePlayer.addEventListener('click', (e) => {
     clearBoard()
-    searchUI.classList.remove('hide')
-    optionsContainer.classList.remove('hide')
+    console.log(selectColor.value)
+    startGame(selectColor.value)
 })
 
-selectColor.addEventListener('change', (e) => {
-    while (gameboard.firstChild) {
-        gameboard.firstChild.remove()
+
+boardDecor.addEventListener("change", (e) => {
+    console.log(e.target.value)
+    switch (e.target.value) {
+        case "wood":
+            document.querySelectorAll(".gridTile").forEach((elem) => {
+                if (elem.classList.contains("lightTile")) {
+                    elem.classList.add("lightWood");
+                }
+                if (elem.classList.contains("darkTile")) {
+                    elem.classList.add("darkWood");
+                }
+            });
+            break;
+        default:
+            document.querySelectorAll(".gridTile").forEach((elem) => {
+                if (elem.classList.contains("lightTile")) {
+                    elem.classList.remove("lightWood");
+                }
+                if (elem.classList.contains("darkTile")) {
+                    elem.style.backgroundColor = e.target.value
+                    elem.classList.remove("darkWood");
+                }
+            });
+            break;
+
     }
-    
-    winnerDiv.classList.remove('show')
-    startGame(selectColor.value)
 
 })
 
@@ -53,7 +74,12 @@ selectColor.addEventListener('change', (e) => {
 function startGame(msg) {
     gameboard.style.display = "flex";
     fadeIn(gameboard, .02, 10);
-    createBoard(msg);
+    if (msg != "black") {
+        createBoard("white")
+    }
+    else {
+        createBoard(msg);
+    }
     addChessPieces();
     nextTurn()
     selectColor.value = '';
@@ -175,9 +201,7 @@ function addChessPieces() {
 
 function removePiece(piece) {
     let array;
-
     piece.dataset.color == "white" ? array = whitePiecesList : array = blackPiecesList;
-    console.log(array)
     for (let i = 0; i < array.length; i++) {
         if (piece == array[i]) {
             array.splice(i, 1)
@@ -185,6 +209,12 @@ function removePiece(piece) {
         }
     }
     piece.remove();
+}
+
+function undoRemovePiece(piece) {
+    let array;
+    piece.dataset.color == "white" ? array = whitePiecesList : array = blackPiecesList;
+    array.push(piece)
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -307,14 +337,6 @@ function createPossibleMove(col, row) {
     //console.log(`${col}${row}`)
     let tile = document.querySelector(`#${col}${row}`)
 
-    /** 
-    if (tile.dataset.occupied == "true") {
-        console.log(tile)
-        if (tile.querySelector(".chessPiece").dataset.type == "King") {
-            tile.querySelector(".chessPiece").dataset.check = "true";
-        }
-    }
-    */
     if (tile.dataset.occupied == "true") {
         currentPossibleMove.style.backgroundColor = "red"
     }
@@ -367,7 +389,41 @@ function getAllEnemyMoves(piece) {
     })   
 }
 
+function kingNotSafe(pColor) {
+    let king = document.querySelector(`.${pColor.substring(0, 1)}King`);
+    let kingTile = king.parentNode;
+
+    for (let i = 0; i < enemyMovesList.length; i++) {
+        if (kingTile.dataset.col == enemyMovesList[i][0] && kingTile.dataset.row == enemyMovesList[i][1]) {
+            return true
+        }
+    }
+    return false;
+}
+
 function createAllPossibleMoves(piece) {
+    playerMovesList.forEach((move) => {
+        if (piece.dataset.type != "King") {
+            createPossibleMove(move[0], move[1])
+        }
+        else {
+            getAllEnemyMoves(piece)
+            let exists = false;
+            for (let i = 0; i < enemyMovesList.length; i++) {
+                if (move[0] == enemyMovesList[i][0] && move[1] == enemyMovesList[i][1]) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                createPossibleMove(move[0], move[1])
+            }
+        }
+    })
+}
+
+
+function createAllPossibleMoves2(piece) {
     playerMovesList.forEach((move) => {
         if (piece.dataset.type != "King") {
             createPossibleMove(move[0], move[1])
@@ -430,14 +486,10 @@ function checkVerticalTile(row, col, pColor, rowDistance, kill, array) {
 function checkHorizontalTile(row, col, pColor, colDistance, kill, array) {
     let nullBool;
     colDistance > 0 ? nullBool = (col + colDistance <= 7) : nullBool = (col + colDistance >= 0)
-    console.log(col)
-    console.log(colDistance)
-
 
     if (nullBool) { //check null
 
         let targetTileColumn = alphabet[col + colDistance];
-        console.log(document.querySelector(`#${targetTileColumn}${row}`))
         let horizontalTile = document.querySelector(`#${targetTileColumn}${row}`)
         if (kill == true) {
             if (horizontalTile.dataset.occupied == "true") {
@@ -714,8 +766,6 @@ function checkCastlingTiles(piece, array) {
         let currentRow = Number(piece.dataset.row);
         let rookTile1 = document.querySelector(`#A${currentRow}`)
         let rookTile2 = document.querySelector(`#H${currentRow}`)
-        console.log(rookTile1)
-        console.log(rookTile2)
         if (rookTile1.dataset.occupied == "true") {
             let rook1 = rookTile1.querySelector(".chessPiece");
             if (rook1.dataset.type == "Rook" && rook1.dataset.color == piece.dataset.color) {
@@ -789,6 +839,7 @@ function checkDrop(coordinate, container) {
     }
   }
   else {
+    dropSpot = "";
     return false
   }
 }
@@ -803,12 +854,23 @@ function startMovingPiece(piece, eventTarget) {
     offSet = [piece.offsetLeft - eventTarget.clientX, piece.offsetTop - eventTarget.clientY]
 }
 
-function dropPiece(piece, targetSpot) {
+function dropPiece(piece, targetSpot, parent) {
     piece.style.removeProperty('left');
     piece.style.removeProperty('top');
     piece.style.zIndex = 1234;
     piece.style.position = "relative";
+    let pieceMoved = piece.dataset.moved;
 
+    let targetCurrentPiece = "";
+    let targetOccupied = "false";
+    if (targetSpot.dataset.occupied == "true")
+    {
+        targetCurrentPiece = targetSpot.querySelector(".chessPiece")
+        targetOccupied = "true"
+        removePiece(targetCurrentPiece)
+    }
+
+    parent.dataset.occupied = "false"
     targetSpot.appendChild(piece);
     targetSpot.dataset.occupied = "true";
 
@@ -817,6 +879,35 @@ function dropPiece(piece, targetSpot) {
     piece.dataset.colNum = targetSpot.dataset.colNum;
     piece.dataset.col = targetSpot.dataset.col;
     piece.dataset.row = targetSpot.dataset.row;
+
+    getAllEnemyMoves(piece);
+    if (kingNotSafe(piece.dataset.color)) {
+        resetPiecePosition(piece, parent)
+        piece.dataset.moved = pieceMoved;
+        targetSpot.dataset.occupied = targetOccupied;
+        if (targetCurrentPiece != "") {
+            targetSpot.appendChild(targetCurrentPiece)
+            undoRemovePiece(targetCurrentPiece)
+            console.log("Invalid. King would be in check!")
+            alert("Invalid. King would be in check!")
+        }
+        return false;
+    }
+
+    return true
+
+
+}
+
+function undoDrop(elem, parent) {
+    resetPiecePosition(elem, parent)
+    parent.dataset.occupied = "true";
+
+    elem.dataset.position = parent.id;
+    elem.dataset.colNum = parent.dataset.colNum;
+    elem.dataset.col = parent.dataset.col;
+    elem.dataset.row = parent.dataset.row;
+ 
 }
 
 
@@ -826,7 +917,17 @@ function resetPiecePosition(elem, parent) {
     elem.style.removeProperty('top');
     elem.style.zIndex = 1234;
     parent.appendChild(elem);
+    parent.dataset.occupied = "true";
+
+
+    elem.dataset.position = parent.id;
+    elem.dataset.colNum = parent.dataset.colNum;
+    elem.dataset.col = parent.dataset.col;
+    elem.dataset.row = parent.dataset.row;
 }
+
+
+
 
 function clearDragInfo() {
     dropSpot = "";
@@ -874,13 +975,10 @@ function customMouseDragEvents(element, elementParent) {
                 }
             }
             if (dropSpot != "") {
-                if (dropSpot.dataset.occupied == "true") {
-                    removePiece(dropSpot.querySelector(".chessPiece"))
-                }
-                elementParent.dataset.occupied = "false";
                 castleRook(dragTarget, dropSpot) 
-                dropPiece(dragTarget, dropSpot)
-                nextTurn();
+                if (dropPiece(dragTarget, dropSpot, elementParent)) {
+                    nextTurn();
+                }
             }
             else {
                 resetPiecePosition(dragTarget, elementParent);
@@ -937,12 +1035,10 @@ function customTouchDragEvents(element, elementParent) {
                 }
             }
             if (dropSpot != "") {
-                if (dropSpot.dataset.occupied == "true") {
-                    removePiece(dropSpot.querySelector(".chessPiece"))
+                castleRook(dragTarget, dropSpot) 
+                if (dropPiece(dragTarget, dropSpot, elementParent)) {
+                    nextTurn();
                 }
-                elementParent.dataset.occupied = "false";
-                dropPiece(dragTarget, dropSpot)
-                nextTurn();
             }
             else {
                 resetPiecePosition(dragTarget, elementParent);
@@ -986,18 +1082,11 @@ document.addEventListener('touchmove', (e) => {
 function createClickablePossibleMoves(piece, oldParent) {
     document.querySelectorAll(".possibleMove").forEach((possibleMove) => {
         possibleMove.addEventListener('click', (e) => {
-            //checkForCheck(piece, possibleMove.parentNode, enemyMovesList)
-            console.log(possibleMove)
-            console.log(possibleMove.parentNode)
-            if (possibleMove.parentNode.dataset.occupied == "true") {
-                removePiece(possibleMove.parentNode.querySelector(".chessPiece"))
-            }
-            oldParent.dataset.occupied = "false";
-    
-            castleRook(piece, possibleMove.parentNode) 
-            dropPiece(piece, possibleMove.parentNode)
-            nextTurn();
-                   
+
+            castleRook(piece, possibleMove.parentNode)
+            if (dropPiece(piece, possibleMove.parentNode, oldParent)) {
+                nextTurn();
+            }       
         })
     })
      

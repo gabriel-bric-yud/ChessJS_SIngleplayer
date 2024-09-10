@@ -159,16 +159,20 @@ body {
 }
 
 .darkTile {
-    background-color: burlywood;
-
-    background-image: url("imgs/darkwoodTexture.jpg");
-    /**color: white;background-image: url("imgs/darkwoodTexture.jpg"); background-image: url("imgs/lightwoodTexture.jpg")    background-blend-mode: darken;; color: white;*/
+    background-color: darkolivegreen;
 }
 
 .lightTile {
-    background-color: whitesmoke;
+    background-color: burlywood;
     color: black;
-    background-image: url("imgs/lightwoodTexture.jpg");
+}
+
+.lightWood {
+    background-image: url("imgs/lightwoodTexture.jpg") ;
+}
+
+.darkWood {
+    background-image: url("imgs/darkwoodTexture.jpg"); 
 }
 
 
@@ -295,9 +299,19 @@ body {
 
 /*******************************************************************************************/
 
-
+legend {
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+}
 #selectColor {
     z-index: 1004;
+}
+
+#boardDecor {
+    margin: 10px auto;
+    text-align: center;
 }
 
 #userInterface {
@@ -307,10 +321,10 @@ body {
     justify-content: center;
     justify-items: center;
     align-items: center;
-    margin: 20px auto;
-    background-color: #00A856;
+    margin: 10px auto;
+    padding: 15px;
+    background-color: Orange;/** #00A856;*/
     width: 340px;
-    height: 180px;
     border-radius: 10px;
 }
 
@@ -318,17 +332,14 @@ body {
 #searchUI {
     padding: 5px 0;
     text-align: center;
-    margin: 5px auto;
     width: fit-content;
     height: fit-content;
 }
 
-#searchUser {
-    cursor: pointer;
-}
 
 
 #setUp {
+    display: grid;
     text-align: center;
     margin: 0 auto;
     width: 100%;
@@ -338,7 +349,7 @@ body {
     padding: 20px;
     width: fit-content;
     height: fit-content;
-    margin: 0 auto;
+    margin: 10px auto;
     position: relative;
     border-radius: 20px;
     cursor: pointer;
@@ -355,7 +366,6 @@ body {
     margin: 5px auto;
     width: 100%;
     z-index: 1004;
-    height: 2ch;
     cursor: pointer;
 }
 

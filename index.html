@@ -34,19 +34,35 @@
         </div>
 
         <div id = "userInterface">         
-            <div id = "searchUI" class = "hide">  
-                <div id = "optionsContainer" class = "hide">
-                    <select name = "colorSelect" id = "selectColor" style = "border-radius: 20px;"> 
-                        <option value ="" disabled selected>Select your starting color <!--&#9964--></option>
-                        <option value ="white">White</option>
-                        <option value ="black">Black</option>
-                    </select>
-                </div>
-            </div>
-            
 
             <div id = "setUp">
-                <button id = "singlePlayer" class = "playerButton" type="button">Single Player</button>
+                <button id = "singlePlayer" class = "playerButton" type="button">Start Game</button>
+                <div id = "searchUI">  
+                    <div id = "optionsContainer">
+                        <fieldset>
+                            <legend>Player Color:</legend>
+                            <select name = "colorSelect" id = "selectColor" style = "border-radius: 20px;"> 
+                                <option value ="" disabled>Select your starting color <!--&#9964--></option>
+                                <option value ="white" selected>White</option>
+                                <option value ="black">Black</option>
+                            </select>
+                        </fieldset>
+                    </div>
+                </div>
+                
+                
+                <fieldset>
+                    <legend>Board Colors:</legend>
+                    <select name = "boardDecor" id = "boardDecor" style = "border-radius: 20px;"> 
+                        <option value ="" disabled>Select Board Style <!--&#9964--></option>
+                        <option value ="wood">Wood</option>
+                        <option value ="darkolivegreen" selected>Olive Green</option>
+                        <option value ="indigo">Indigo</option>
+                        <option value ="blueviolet">Violet</option>
+                        <option value ="crimson">Crimson</option>
+                        <option value ="darkred">Red</option>
+                    </select>
+                </fieldset>
             </div>
 
         </div>     
