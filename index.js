@@ -1004,6 +1004,7 @@ function customMouseDragEvents(element, elementParent) {
                 }
             }
             else {
+                dragTarget.classList.remove("bigger")
                 resetPiecePosition(dragTarget, elementParent);
             }
         }
@@ -1065,6 +1066,7 @@ function customTouchDragEvents(element, elementParent) {
                 }
             }
             else {
+                dragTarget.classList.remove("bigger")
                 resetPiecePosition(dragTarget, elementParent);
             }
         }
