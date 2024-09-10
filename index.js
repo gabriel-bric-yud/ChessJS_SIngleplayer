@@ -40,32 +40,7 @@ singlePlayer.addEventListener('click', (e) => {
 
 
 boardDecor.addEventListener("change", (e) => {
-    console.log(e.target.value)
-    switch (e.target.value) {
-        case "wood":
-            document.querySelectorAll(".gridTile").forEach((elem) => {
-                if (elem.classList.contains("lightTile")) {
-                    elem.classList.add("lightWood");
-                }
-                if (elem.classList.contains("darkTile")) {
-                    elem.classList.add("darkWood");
-                }
-            });
-            break;
-        default:
-            document.querySelectorAll(".gridTile").forEach((elem) => {
-                if (elem.classList.contains("lightTile")) {
-                    elem.classList.remove("lightWood");
-                }
-                if (elem.classList.contains("darkTile")) {
-                    elem.style.backgroundColor = e.target.value
-                    elem.classList.remove("darkWood");
-                }
-            });
-            break;
-
-    }
-
+    updateTileColor()
 })
 
 
@@ -241,7 +216,11 @@ function createBoard(pColor) {
             }
         }
     }
+
+    updateTileColor()
+
 }
+
 
 
 
@@ -323,6 +302,50 @@ function createTileColor(gridTile, r, c) {
                 gridTile.classList.add('lightTile') 
             }
             break;
+    }
+
+}
+
+function updateTileColor() {
+    switch (boardDecor.value) {
+        case "wood":
+            document.querySelectorAll(".gridTile").forEach((elem) => {
+                if (elem.classList.contains("lightTile")) {
+                    elem.classList.add("lightWood");
+                }
+                if (elem.classList.contains("darkTile")) {
+                    elem.classList.add("darkWood");
+                }
+            });
+            break;
+        case "rainbow":
+            document.querySelectorAll(".gridTile").forEach((elem) => {
+                if (elem.classList.contains("lightTile")) {
+                    elem.classList.remove("lightWood");
+                }
+                if (elem.classList.contains("darkTile")) {
+                    elem.classList.remove("darkWood");
+                    let r = Math.floor(Math.random() * 150) + 25
+                    let g = Math.floor(Math.random() * 150) + 25
+                    let b = Math.floor(Math.random() * 150) + 25
+                    console.log(`rgb(${r},${g}, ${b})`)
+                    elem.style.backgroundColor = `rgb(${r},${g}, ${b})`
+
+                }
+            });
+            break;
+        default:
+            document.querySelectorAll(".gridTile").forEach((elem) => {
+                if (elem.classList.contains("lightTile")) {
+                    elem.classList.remove("lightWood");
+                }
+                if (elem.classList.contains("darkTile")) {
+                    elem.style.backgroundColor = boardDecor.value
+                    elem.classList.remove("darkWood");
+                }
+            });
+            break;
+
     }
 
 }
