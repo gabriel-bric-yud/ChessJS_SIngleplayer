@@ -1058,6 +1058,7 @@ function customTouchDragEvents(element, elementParent) {
                 }
             }
             if (dropSpot != "") {
+                dragTarget.classList.remove("bigger")
                 castleRook(dragTarget, dropSpot) 
                 if (dropPiece(dragTarget, dropSpot, elementParent)) {
                     nextTurn();
@@ -1067,7 +1068,7 @@ function customTouchDragEvents(element, elementParent) {
                 resetPiecePosition(dragTarget, elementParent);
             }
         }
-        dragTarget.classList.remove("bigger")
+        
         clicked = false;
 
         clearDragInfo()
